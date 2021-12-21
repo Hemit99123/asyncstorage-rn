@@ -6,22 +6,17 @@ import {
   View,
   StyleSheet,
   Button,
-  TouchableOpacity,
 } from 'react-native';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RadioGroup,{Radio} from "react-native-radio-input";
+
+
  
 export default function App() {
-  let now = moment().format('MMM Do YYYY, h:mm a');
- 
-  const [status, setStatus] = useState('');
+  var pass = 'you pass! ' + moment().format('MMM Do YYYY, h:mm a')
+  var fail = 'you failed ' + moment().format('MMM Do YYYY, h:mm a')
   const [load, setLoad] = useState('');
 
-  const setData = (value) => {
-    setStatus(value)
-  }
- 
   const getData = async () => {
     try {
       var value = await AsyncStorage.getItem('results');
@@ -33,14 +28,26 @@ export default function App() {
     }
   };
  
-  const storeData = async () => {
+  const storeData_pass = async () => {
     try {
-      await AsyncStorage.setItem('results', status);
+      await AsyncStorage.setItem('results', pass);
       alert('saved');
       getData()
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const storeData_fail = async () => {
+
+    try {
+      await AsyncStorage.setItem('results', fail);
+      alert('saved');
+      getData()
+    } catch (e) {
+      console.log(e);
+    }
+
   };
  
  
@@ -54,7 +61,6 @@ export default function App() {
       if (load != null) {
       var value = await AsyncStorage.removeItem('results');
       setLoad(value)
-      setStatus('')
       alert('deleted data');
       } else {
         alert('error, there is nothing to reset.')
@@ -71,19 +77,10 @@ export default function App() {
       <Text>dry throat </Text>
       <Text>difficulty breathing</Text>
       <Text></Text>
-      <Text>Press on the apporiate option!</Text>
-      <Text>
-        Also make sure to press Save or else the results will not come!
-      </Text>
       <Text> </Text>
-      <Text>Check the correct box!</Text>
-      <RadioGroup getChecked={setData}>
-        <Radio iconName={"lens"} label={"I have at least 1 of these symptoms"} value={"you fail " + now}/>
-        <Radio iconName={"lens"} label={"I have no symptoms"} value={"you pass " + now}/>
-    </RadioGroup>
+      <Button style={styles.appButtonContainer} title="I don't have any of these symptoms" onPress={storeData_pass}></Button>
+      <Button style={styles.appButtonContainer}title="I do have at least one of these symptoms" onPress={storeData_fail}></Button>
       <Text> </Text>
-      <Text> </Text>
-      <Button title="Enter" onPress={storeData}></Button>
       <Button title="Reset results!" onPress={deleteData}></Button>
  
       <Text>{load}</Text>
@@ -98,6 +95,7 @@ const styles = StyleSheet.create({
     paddingTop: Constants.statusBarHeight,
     backgroundColor: '#ecf0f1',
     padding: 8,
+
   },
 });
  
