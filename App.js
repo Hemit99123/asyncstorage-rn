@@ -13,9 +13,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
  
 export default function App() {
-  var pass = 'you pass! ' + moment().format('MMM Do YYYY, h:mm a')
-  var fail = 'you failed ' + moment().format('MMM Do YYYY, h:mm a')
-  const [load, setLoad] = useState('');
+  let now = moment().format('MMM Do YYYY, h:mm a')
+  var msg = 'Nothing saved in this session '
+  var now2 = moment().format('LT');  
+  var pass = 'you pass! ' + now
+  var fail = 'you failed ' + now
+
+  const [load, setLoad] = useState('No results have been found');
+  const [now_, setNow_] = useState(msg);
 
   const getData = async () => {
     try {
@@ -31,7 +36,9 @@ export default function App() {
   const storeData_pass = async () => {
     try {
       await AsyncStorage.setItem('results', pass);
-      alert('saved');
+      let now = 'saved at ' + now2
+      alert(now);
+      setNow_('Last time ' + now + ' in this session.')
       getData()
     } catch (e) {
       console.log(e);
@@ -42,28 +49,29 @@ export default function App() {
 
     try {
       await AsyncStorage.setItem('results', fail);
-      alert('saved');
+      let now = 'saved at ' + now2
+      alert(now);
+      setNow_('Last time ' + now + ' in this session.')
       getData()
     } catch (e) {
       console.log(e);
     }
 
   };
- 
- 
- 
+  
   useEffect(() => {
     getData();
   });
  
   const deleteData = async () => {
     try {
-      if (load != null) {
-      var value = await AsyncStorage.removeItem('results');
-      setLoad(value)
-      alert('deleted data');
+      if (load === 'No results have been found') {
+        alert('error, nothing to reset')
       } else {
-        alert('error, there is nothing to reset.')
+          await AsyncStorage.removeItem('results');
+          setLoad('No results have been found')
+          setNow_(msg)
+          alert('deleted data');
       }
     } catch (e) {
       console.log(e);
@@ -81,9 +89,13 @@ export default function App() {
       <Button style={styles.appButtonContainer} title="I don't have any of these symptoms" onPress={storeData_pass}></Button>
       <Button style={styles.appButtonContainer}title="I do have at least one of these symptoms" onPress={storeData_fail}></Button>
       <Text> </Text>
-      <Button title="Reset results!" onPress={deleteData}></Button>
+      <Button title="Reset logs!" onPress={deleteData}></Button>
  
       <Text>{load}</Text>
+      <Text> </Text>
+      <Text>{now_}</Text>
+
+      <Text></Text>
     </View>
   );
 }
