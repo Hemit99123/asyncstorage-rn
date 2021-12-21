@@ -10,14 +10,17 @@ import {
 } from 'react-native';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RadioGroup,{Radio} from "react-native-radio-input";
  
 export default function App() {
   let now = moment().format('MMM Do YYYY, h:mm a');
  
   const [status, setStatus] = useState('');
   const [load, setLoad] = useState('');
-  const setPass = () => setStatus('you pass! ' + now);
-  const setFail = () => setStatus('you fail ' + now);
+
+  const setData = (value) => {
+    setStatus(value)
+  }
  
   const getData = async () => {
     try {
@@ -73,16 +76,14 @@ export default function App() {
         Also make sure to press Save or else the results will not come!
       </Text>
       <Text> </Text>
-      <TouchableOpacity onPress={setPass}>
-        <Text>I do not have any of these symptoms!</Text>
-      </TouchableOpacity>
-      <Text> </Text>
-      <TouchableOpacity onPress={setFail}>
-        <Text>I do have at least one of these symptoms!</Text>
-      </TouchableOpacity>
+      <Text>Check the correct box!</Text>
+      <RadioGroup getChecked={setData}>
+        <Radio iconName={"lens"} label={"I have at least 1 of these symptoms"} value={"you fail " + now}/>
+        <Radio iconName={"lens"} label={"I have no symptoms"} value={"you pass " + now}/>
+    </RadioGroup>
       <Text> </Text>
       <Text> </Text>
-      <Button title="Save" onPress={storeData}></Button>
+      <Button title="Enter" onPress={storeData}></Button>
       <Button title="Reset results!" onPress={deleteData}></Button>
  
       <Text>{load}</Text>
