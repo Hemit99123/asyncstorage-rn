@@ -6,11 +6,12 @@ import {
   View,
   StyleSheet,
   Button,
+  Alert
 } from 'react-native';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
+var title = 'COVID19 CHECKER'
  
 export default function App() {
   let now = moment().format('MMM Do YYYY, h:mm a')
@@ -37,7 +38,10 @@ export default function App() {
     try {
       await AsyncStorage.setItem('results', pass);
       let now = 'saved at ' + now2
-      alert(now);
+      Alert.alert(
+        title,
+        now
+      )
       setNow_('Last time ' + now + ' in this session.')
       getData()
     } catch (e) {
@@ -50,7 +54,10 @@ export default function App() {
     try {
       await AsyncStorage.setItem('results', fail);
       let now = 'saved at ' + now2
-      alert(now);
+     Alert.alert(
+       title,
+       now
+     )
       setNow_('Last time ' + now + ' in this session.')
       getData()
     } catch (e) {
@@ -77,6 +84,20 @@ export default function App() {
       console.log(e);
     }
   };
+
+  const deleteAlert = () => {
+        Alert.alert(
+      title,
+      "Are you sure you want to reset all data?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: deleteData }
+      ]
+        )
+  }
   return (
     <View style={styles.container}>
       <Text>COVID-19 SYMPTOMS</Text>
@@ -89,13 +110,13 @@ export default function App() {
       <Button style={styles.appButtonContainer} title="I don't have any of these symptoms" onPress={storeData_pass}></Button>
       <Button style={styles.appButtonContainer}title="I do have at least one of these symptoms" onPress={storeData_fail}></Button>
       <Text> </Text>
-      <Button title="Reset logs!" onPress={deleteData}></Button>
+      <Button title="Reset logs!" onPress={deleteAlert}></Button>
  
       <Text>{load}</Text>
       <Text> </Text>
+      <Text>Saved logs:</Text>
+      <Text> </Text>
       <Text>{now_}</Text>
-
-      <Text></Text>
     </View>
   );
 }
